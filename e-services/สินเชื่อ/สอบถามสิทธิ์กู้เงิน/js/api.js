@@ -1,0 +1,18 @@
+// api.js — เรียก GAS JSON API
+const Api = {
+  async call(params) {
+    const qs = new URLSearchParams(params).toString();
+    const resp = await fetch(CONFIG.API_URL + '?' + qs, { method: 'GET' });
+    if (!resp.ok) throw new Error('เชื่อมต่อระบบไม่สำเร็จ (' + resp.status + ')');
+    return resp.json();
+  },
+
+  ping() { return this.call({ action: 'ping' }); },
+  loantypes() { return this.call({ action: 'loantypes' }); },
+  member(memberNo) { return this.call({ action: 'member', member_no: memberNo }); },
+
+  calc(memberNo, loantypeCode, extra) {
+    const p = Object.assign({ action: 'calc', member_no: memberNo, loantype_code: loantypeCode }, extra || {});
+    return this.call(p);
+  }
+};

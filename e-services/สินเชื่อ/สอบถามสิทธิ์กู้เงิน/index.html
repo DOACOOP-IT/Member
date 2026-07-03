@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เช็คสิทธิ์กู้ | สหกรณ์ออมทรัพย์กรมวิชาการเกษตร</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="logo">💰</span>
+      <div>
+        <div class="title">เช็คสิทธิ์กู้</div>
+        <div class="subtitle">สหกรณ์ออมทรัพย์กรมวิชาการเกษตร จำกัด</div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- หน้า 1: ระบุตัวตน (ชั่วคราว จนกว่าจะออกแบบระบบยืนยันตัวตน) -->
+    <section id="screen-login" class="screen">
+      <div class="card">
+        <h2>เข้าสู่ระบบ</h2>
+        <label for="inp-memno">เลขทะเบียนสมาชิก</label>
+        <input id="inp-memno" type="tel" inputmode="numeric" maxlength="8" placeholder="เช่น 00001234" autocomplete="off">
+        <button id="btn-login" class="btn-primary">ตรวจสอบข้อมูล</button>
+        <p id="login-error" class="error hidden"></p>
+      </div>
+    </section>
+
+    <!-- หน้า 2: ข้อมูลสมาชิก + เลือกประเภทเงินกู้ -->
+    <section id="screen-select" class="screen hidden">
+      <div class="card member-card">
+        <div class="member-head">
+          <div>
+            <div id="mem-name" class="member-name"></div>
+            <div id="mem-meta" class="member-meta"></div>
+          </div>
+          <button id="btn-logout" class="btn-link">เปลี่ยน</button>
+        </div>
+        <div class="member-stats">
+          <div class="stat"><div class="stat-label">เงินเดือน</div><div id="mem-salary" class="stat-value"></div></div>
+          <div class="stat"><div class="stat-label">หุ้นสะสม</div><div id="mem-share" class="stat-value"></div></div>
+          <div class="stat"><div class="stat-label">สัญญาคงเหลือ</div><div id="mem-loans" class="stat-value"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>เลือกประเภทเงินกู้</h2>
+        <input id="inp-search" type="text" placeholder="ค้นหาประเภทเงินกู้..." autocomplete="off">
+        <ul id="loantype-list" class="loantype-list"></ul>
+      </div>
+    </section>
+
+    <!-- หน้า 3: ผลการคำนวณสิทธิ์ -->
+    <section id="screen-result" class="screen hidden">
+      <button id="btn-back" class="btn-link">&larr; เลือกประเภทเงินกู้อื่น</button>
+
+      <div class="card result-card">
+        <div id="res-loantype" class="result-loantype"></div>
+        <div class="result-label">สิทธิ์กู้สูงสุดของท่าน</div>
+        <div id="res-permiss" class="result-amount"></div>
+        <div id="res-payment" class="result-payment"></div>
+      </div>
+
+      <div id="res-warnings"></div>
+
+      <div class="card">
+        <h3>ลองปรับยอด/งวด (what-if)</h3>
+        <div class="whatif-row">
+          <div>
+            <label for="inp-amt">ยอดที่อยากกู้ (บาท)</label>
+            <input id="inp-amt" type="tel" inputmode="numeric" placeholder="สูงสุดตามสิทธิ์">
+          </div>
+          <div>
+            <label for="inp-periods">จำนวนงวด</label>
+            <input id="inp-periods" type="tel" inputmode="numeric" placeholder="งวด">
+          </div>
+        </div>
+        <button id="btn-recalc" class="btn-primary">คำนวณใหม่</button>
+      </div>
+
+      <div class="card">
+        <h3>ขั้นตอนการคำนวณ</h3>
+        <ol id="res-steps" class="steps"></ol>
+        <div id="res-detail" class="result-detail"></div>
+      </div>
+
+      <p class="disclaimer">* ผลการคำนวณเป็นการประมาณการเบื้องต้นจากข้อมูล ณ รอบประมวลผลล่าสุด
+        สิทธิ์กู้จริงขึ้นอยู่กับการพิจารณาของสหกรณ์</p>
+    </section>
+
+    <div id="loading" class="loading hidden"><div class="spinner"></div><div>กำลังโหลด...</div></div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
