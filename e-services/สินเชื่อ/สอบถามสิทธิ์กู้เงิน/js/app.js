@@ -47,14 +47,20 @@
     showLoginError('');
     loading(true);
     try {
-      const [memRes, ltRes] = await Promise.all([Api.member(memNo), getLoantypes()]);
+      // ขอรายการประเภทเงินกู้แบบกรองตามสิทธิ์ของสมาชิกคนนี้ (ประเภทที่กู้ไม่ได้จะถูกซ่อน)
+      const [memRes, ltRes] = await Promise.all([
+        Api.member(memNo),
+        Api.call({ action: 'loantypes', member_no: memNo })
+      ]);
       if (!memRes.ok) return showLoginError(memRes.error || 'ไม่พบข้อมูลสมาชิก');
+      state.loantypes = (ltRes.ok && ltRes.loantypes) || [];
+      state.loantypesNote = ltRes.note || '';
       state.memberNo = memNo;
       state.member = memRes.member;
       state.loans = memRes.loans || [];
       localStorage.setItem('loancalc_memno', memNo);
       renderMember();
-      renderLoantypes(ltRes);
+      renderLoantypes(state.loantypes);
       show('screen-select');
     } catch (e) {
       showLoginError('เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่');
@@ -68,13 +74,6 @@
     const el = $('login-error');
     el.textContent = msg;
     el.classList.toggle('hidden', !msg);
-  }
-
-  async function getLoantypes() {
-    if (state.loantypes.length) return state.loantypes;
-    const res = await Api.loantypes();
-    state.loantypes = (res.ok && res.loantypes) || [];
-    return state.loantypes;
   }
 
   // ---------- หน้า 2: ข้อมูลสมาชิก + เลือกประเภท ----------
@@ -91,6 +90,14 @@
     const q = $('inp-search').value.trim().toLowerCase();
     const ul = $('loantype-list');
     ul.innerHTML = '';
+    if (!list.length) {
+      const li = document.createElement('li');
+      li.style.cursor = 'default';
+      li.innerHTML = '<div class="lt-name" style="color:var(--danger)">' +
+        (state.loantypesNote || 'ไม่มีประเภทเงินกู้ที่ท่านมีสิทธิ์กู้ในขณะนี้') + '</div>';
+      ul.appendChild(li);
+      return;
+    }
     list
       .filter((t) => !q || t.loantype_desc.toLowerCase().includes(q) || t.loantype_code.includes(q))
       .forEach((t) => {
