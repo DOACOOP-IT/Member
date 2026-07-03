@@ -100,8 +100,9 @@
     }
     list
       .filter((t) => !q || t.loantype_desc.toLowerCase().includes(q) || t.loantype_code.includes(q))
-      .forEach((t) => {
+      .forEach((t, idx) => {
         const li = document.createElement('li');
+        li.style.animationDelay = (idx * 50) + 'ms'; // staggered fade-in
         li.innerHTML =
           '<div><div class="lt-name">' + t.loantype_desc + '</div>' +
           '<div class="lt-code">รหัส ' + t.loantype_code +
@@ -127,7 +128,17 @@
       renderResult(res);
       show('screen-result');
     } catch (e) {
-      alert('คำนวณไม่สำเร็จ กรุณาลองใหม่');
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'คำนวณไม่สำเร็จ',
+          text: 'กรุณาลองใหม่อีกครั้ง',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#0ea5e9'
+        });
+      } else {
+        alert('คำนวณไม่สำเร็จ กรุณาลองใหม่');
+      }
       console.error(e);
     } finally {
       loading(false);
@@ -172,8 +183,9 @@
     // ขั้นตอนการคำนวณ
     const ol = $('res-steps');
     ol.innerHTML = '';
-    (res.steps || []).forEach((s) => {
+    (res.steps || []).forEach((s, idx) => {
       const li = document.createElement('li');
+      li.style.animationDelay = (idx * 80) + 'ms'; // staggered fade-in
       li.innerHTML = s.name + ': <span class="step-amount">' + fmt(s.amount) + '</span>' +
         '<div class="step-detail">' + (s.detail || '') + '</div>';
       ol.appendChild(li);
