@@ -87,7 +87,7 @@
   }
 
   function renderLoantypes(list) {
-    const q = $('inp-search').value.trim().toLowerCase();
+    const q = $('inp-search') ? $('inp-search').value.trim().toLowerCase() : '';
     const ul = $('loantype-list');
     ul.innerHTML = '';
     if (!list.length) {
@@ -105,9 +105,7 @@
         li.style.animationDelay = (idx * 50) + 'ms'; // staggered fade-in
         li.innerHTML =
           '<div><div class="lt-name">' + t.loantype_desc + '</div>' +
-          '<div class="lt-code">รหัส ' + t.loantype_code +
-          (t.max_periods ? ' • สูงสุด ' + t.max_periods + ' งวด' : '') + '</div></div>' +
-          '<div class="lt-max">เพดาน ' + fmt(t.maxloan_amt) + '</div>';
+          '<div class="lt-code">' + (t.note || '') + '</div></div>';
         li.addEventListener('click', () => selectType(t));
         ul.appendChild(li);
       });
@@ -220,7 +218,7 @@
     $('inp-memno').value = '';
     show('screen-login');
   });
-  $('inp-search').addEventListener('input', () => renderLoantypes(state.loantypes));
+  if ($('inp-search')) $('inp-search').addEventListener('input', () => renderLoantypes(state.loantypes));
   $('btn-back').addEventListener('click', () => show('screen-select'));
   $('btn-recalc').addEventListener('click', () => {
     const extra = {};
