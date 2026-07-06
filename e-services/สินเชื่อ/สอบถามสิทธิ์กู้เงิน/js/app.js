@@ -162,8 +162,7 @@
     $('res-loantype').textContent = res.loantype.loantype_desc + ' (ดอกเบี้ย ' + res.loantype.int_rate + '%)';
     $('res-permiss').textContent = fmt(r.loanrequest_amt);
     $('res-payment').textContent =
-      'ผ่อน ' + r.periods + ' งวด งวดละ ' + fmtBaht(r.period_payment) +
-      (res.loantype.loanpayment_type === 1 ? ' (ไม่รวมดอกเบี้ยรายเดือน)' : '');
+      'ชำระเดือนละ ' + fmtBaht(r.period_payment) + ' (รวมดอกเบี้ยแล้ว) • ' + r.periods + ' งวด';
 
     // เตือนกรณียอดกู้ใหม่น้อยกว่ายอดหักกลบ
     const clearedTotal = (r.cleared_contracts || []).length
