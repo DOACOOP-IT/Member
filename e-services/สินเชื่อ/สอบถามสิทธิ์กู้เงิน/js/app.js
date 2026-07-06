@@ -150,21 +150,23 @@
     if (!res.ok) {
       $('res-loantype').textContent = state.currentType.loantype_desc;
       $('res-permiss').textContent = 'กู้ไม่ได้';
-      $('res-payment').textContent = '';
-      $('res-steps').innerHTML = '';
-      $('res-detail').innerHTML = '';
+      $('res-pay').textContent = '-';
+      $('res-periods').textContent = '-';
+      $('res-salary-remain').textContent = '-';
+      $('res-rate').textContent = '-';
       addBox(boxes, 'danger-box', res.error || 'ไม่สามารถคำนวณได้');
-      (res.warnings || []).forEach((w) => addBox(boxes, 'warning-box', w));
       return;
     }
 
     const r = res.result;
-    $('res-loantype').textContent = res.loantype.loantype_desc + ' (ดอกเบี้ย ' + res.loantype.int_rate + '%)';
+    $('res-loantype').textContent = res.loantype.loantype_desc;
     $('res-permiss').textContent = fmt(r.loanrequest_amt);
-    $('res-payment').textContent =
-      'ชำระเดือนละ ' + fmtBaht(r.period_payment) + ' (รวมดอกเบี้ยแล้ว) • ' + r.periods + ' งวด';
+    $('res-pay').textContent = fmt(r.period_payment);
+    $('res-periods').textContent = r.periods + ' งวด';
+    $('res-salary-remain').textContent = fmt(r.salary_remain);
+    $('res-rate').textContent = res.loantype.int_rate;
 
-    // เตือนกรณียอดกู้ใหม่น้อยกว่ายอดหักกลบ
+    // เตือนกรณียอดกู้ใหม่น้อยกว่ายอดหักกลบ (สำคัญ — แสดงเป็นกล่องค้างไว้)
     const clearedTotal = (r.cleared_contracts || []).length
       ? state.loans
           .filter((l) => r.cleared_contracts.includes(l.loancontract_no))
@@ -175,27 +177,20 @@
         'ยอดกู้ใหม่ (' + fmt(r.loanrequest_amt) + ') น้อยกว่ายอดหนี้เดิมที่ต้องหักกลบ (' +
         fmt(clearedTotal) + ') — ในทางปฏิบัติอาจไม่สามารถกู้ประเภทนี้เพิ่มได้');
     }
-    (res.warnings || []).forEach((w) => addBox(boxes, 'warning-box', w));
 
-    // ขั้นตอนการคำนวณ
-    const ol = $('res-steps');
-    ol.innerHTML = '';
-    (res.steps || []).forEach((s, idx) => {
-      const li = document.createElement('li');
-      li.style.animationDelay = (idx * 80) + 'ms'; // staggered fade-in
-      li.innerHTML = s.name + ': <span class="step-amount">' + fmt(s.amount) + '</span>' +
-        '<div class="step-detail">' + (s.detail || '') + '</div>';
-      ol.appendChild(li);
-    });
-
-    // รายละเอียดประกอบ
-    $('res-detail').innerHTML =
-      'เงินเดือนสุทธิหลังหักภาระ: ' + fmtBaht(r.salary_net) + '<br>' +
-      'ยอดหักสหกรณ์ต่อเดือน (หุ้น+หนี้เดิม): ' + fmtBaht(r.paymonth_coop) + '<br>' +
-      'หนี้เดิมคงเหลือ (ไม่รวมที่หักกลบ): ' + fmtBaht(r.old_loan_balance) +
-      (r.cleared_contracts.length ? '<br>สัญญาที่หักกลบ: ' + r.cleared_contracts.join(', ') : '') +
-      '<br>ดอกเบี้ยเดือนแรกโดยประมาณ: ' + fmtBaht(r.interest_first_month) +
-      '<br><span style="font-size:11.5px">ที่มาอัตราดอกเบี้ย: ' + res.loantype.int_rate_source + '</span>';
+    // ข้อสังเกตอื่นๆ แจ้งเป็น popup แล้วปิดอัตโนมัติ
+    if ((res.warnings || []).length && typeof Swal !== 'undefined') {
+      Swal.fire({
+        toast: true,
+        position: 'top',
+        icon: 'info',
+        html: '<div style="text-align:left;font-size:13px;line-height:1.6">' +
+              res.warnings.map((w) => '• ' + w).join('<br>') + '</div>',
+        showConfirmButton: false,
+        timer: 8000,
+        timerProgressBar: true
+      });
+    }
 
     // เติมค่า placeholder ให้ช่อง what-if
     $('inp-amt').placeholder = 'สูงสุด ' + fmt(r.loanpermiss_amt);

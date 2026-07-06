@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260706a">
+  <link rel="stylesheet" href="css/style.css?v=20260706b">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -63,13 +63,18 @@
         <div id="res-loantype" class="result-loantype"></div>
         <div class="result-label">สิทธิ์กู้สูงสุดของท่าน</div>
         <div id="res-permiss" class="result-amount"></div>
-        <div id="res-payment" class="result-payment"></div>
+        <div class="result-grid">
+          <div class="rstat"><div class="rstat-label">ชำระต่อเดือน</div><div id="res-pay" class="rstat-value"></div></div>
+          <div class="rstat"><div class="rstat-label">จำนวนงวด</div><div id="res-periods" class="rstat-value"></div></div>
+          <div class="rstat"><div class="rstat-label">เงินเดือนคงเหลือรับ</div><div id="res-salary-remain" class="rstat-value"></div></div>
+        </div>
+        <div class="result-note">ค่างวดรวมดอกเบี้ยแล้ว (อัตรา <span id="res-rate"></span>%)</div>
       </div>
 
       <div id="res-warnings"></div>
 
-      <div class="card">
-        <h3>ลองปรับยอด/งวด (what-if)</h3>
+      <div class="card whatif-card">
+        <h3>ลองปรับยอด/งวด</h3>
         <div class="whatif-row">
           <div>
             <label for="inp-amt">ยอดที่อยากกู้ (บาท)</label>
@@ -83,12 +88,6 @@
         <button id="btn-recalc" class="btn-primary">คำนวณใหม่</button>
       </div>
 
-      <div class="card">
-        <h3>ขั้นตอนการคำนวณ</h3>
-        <ol id="res-steps" class="steps"></ol>
-        <div id="res-detail" class="result-detail"></div>
-      </div>
-
       <p class="disclaimer">* ผลการคำนวณเป็นการประมาณการเบื้องต้นจากข้อมูล ณ รอบประมวลผลล่าสุด
         สิทธิ์กู้จริงขึ้นอยู่กับการพิจารณาของสหกรณ์</p>
     </section>
@@ -96,8 +95,8 @@
     <div id="loading" class="loading hidden"><div class="spinner"></div><div>กำลังโหลด...</div></div>
   </main>
 
-  <script src="js/config.js?v=20260706a"></script>
-  <script src="js/api.js?v=20260706a"></script>
-  <script src="js/app.js?v=20260706a"></script>
+  <script src="js/config.js?v=20260706b"></script>
+  <script src="js/api.js?v=20260706b"></script>
+  <script src="js/app.js?v=20260706b"></script>
 </body>
 </html>
